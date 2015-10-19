@@ -5,6 +5,7 @@ import unittest
 
 import axelrod
 from axelrod import DefaultGame, Game, Player, simulate_play
+from axelrod.player import History
 
 
 C, D = axelrod.Actions.C, axelrod.Actions.D
@@ -15,6 +16,20 @@ def cooperate(self):
 
 def defect(self):
     return D
+
+
+class TestHistoryClass(unittest.TestCase):
+
+    def test_empty(self):
+        h = History()
+        self.assertTrue(h.empty)
+
+        h.append(10)
+        self.assertFalse(h.empty)
+
+    def test_last_move(self)
+        h = History()
+
 
 
 class TestPlayerClass(unittest.TestCase):

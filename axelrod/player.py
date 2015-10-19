@@ -2,12 +2,11 @@ import inspect
 import random
 import copy
 
-from axelrod import Actions
+from axelrod import Actions, reverse_action
 from .game import DefaultGame
 
 
 C, D = Actions.C, Actions.D
-flip_dict = {C: D, D: C}
 
 
 # Strategy classifiers
@@ -47,6 +46,17 @@ def update_histories(player1, player2, move1, move2):
     elif move2 == D:
         player2.defections += 1
 
+class History(list):
+
+    def last_n_moves(self, n):
+        return self[-n:]
+
+    def last_move(self):
+        return self[-1]
+
+    def empty(self):
+        return len(self) == 0
+
 
 class Player(object):
     """A class for a player in the tournament.
@@ -66,7 +76,7 @@ class Player(object):
 
     def __init__(self):
         """Initiates an empty history and 0 score for a player."""
-        self.history = []
+        self.history = History()
         self.classifier = copy.copy(self.classifier)
         if self.name == "Player":
             self.classifier['stochastic'] = False
@@ -100,10 +110,10 @@ class Player(object):
     def _add_noise(self, noise, s1, s2):
         r = random.random()
         if r < noise:
-            s1 = flip_dict[s1]
+            s1 = reverse_action(s1)
         r = random.random()
         if r < noise:
-            s2 = flip_dict[s2]
+            s2 = reverse_action(s2)
         return s1, s2
 
     def strategy(self, opponent):
@@ -137,6 +147,6 @@ class Player(object):
         re-written (in the inherited class) and should not only reset history but also
         rest all other attributes.
         """
-        self.history = []
+        self.history = History()
         self.cooperations = 0
         self.defections = 0

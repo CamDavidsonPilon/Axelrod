@@ -19,10 +19,10 @@ class Appeaser(Player):
     }
 
     def strategy(self, opponent):
-        if not len(opponent.history):
+        if opponent.history.empty:
             self.move = C
         else:
-            if opponent.history[-1] == D:
+            if opponent.last_move == D:
                 if self.move == C:
                     self.move = D
                 else:

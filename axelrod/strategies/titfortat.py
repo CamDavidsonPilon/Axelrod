@@ -18,7 +18,7 @@ class TitForTat(Player):
 
     @staticmethod
     def strategy(opponent):
-        return D if opponent.history[-1:] == [D] else C
+        return D if opponent.history.last_n_moves(1) == [D] else C
 
 
 class TitFor2Tats(Player):
@@ -35,7 +35,7 @@ class TitFor2Tats(Player):
 
     @staticmethod
     def strategy(opponent):
-        return D if opponent.history[-2:] == [D, D] else C
+        return D if opponent.history.last_n_moves(2) == [D, D] else C
 
 
 class TwoTitsForTat(Player):
@@ -52,7 +52,7 @@ class TwoTitsForTat(Player):
 
     @staticmethod
     def strategy(opponent):
-        return D if D in opponent.history[-2:] else C
+        return D if D in opponent.history.last_n_moves(2) else C
 
 
 class Bully(Player):
@@ -73,7 +73,7 @@ class Bully(Player):
 
     @staticmethod
     def strategy(opponent):
-        return C if opponent.history[-1:] == [D] else D
+        return C if opponent.history.last_n_moves(1) == [D] else D
 
 
 class SneakyTitForTat(Player):
@@ -93,9 +93,9 @@ class SneakyTitForTat(Player):
             return "C"
         if D not in opponent.history:
             return D
-        if opponent.history[-1] == D and self.history[-2] == D:
+        if opponent.history.last_move == D and self.history[-2] == D:
             return "C"
-        return opponent.history[-1]
+        return opponent.history.last_move
 
 
 class SuspiciousTitForTat(Player):
@@ -112,7 +112,7 @@ class SuspiciousTitForTat(Player):
 
     @staticmethod
     def strategy(opponent):
-        return C if opponent.history[-1:] == [C] else D
+        return C if opponent.history.last_n_moves(1) == [C] else D
 
 
 class AntiTitForTat(Player):
@@ -130,7 +130,7 @@ class AntiTitForTat(Player):
 
     @staticmethod
     def strategy(opponent):
-        return D if opponent.history[-1:] == [C] else C
+        return D if opponent.history.last_n_moves(1) == [C] else C
 
 
 class HardTitForTat(Player):
@@ -151,7 +151,7 @@ class HardTitForTat(Player):
         if not opponent.history:
             return C
         # Defects if D in the opponent's last three moves
-        if D in opponent.history[-3:]:
+        if D in opponent.history.last_n_moves(3):
             return D
         # Otherwise cooperates
         return C
@@ -176,7 +176,7 @@ class HardTitFor2Tats(Player):
         if not opponent.history:
             return C
         # Defects if two consecutive D in the opponent's last three moves
-        history_string = "".join(opponent.history[-3:])
+        history_string = "".join(opponent.history.last_n_moves(3))
         if 'DD' in history_string:
             return D
         # Otherwise cooperates

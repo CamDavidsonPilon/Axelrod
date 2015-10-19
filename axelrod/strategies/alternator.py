@@ -14,7 +14,7 @@ class Alternator(Player):
     }
 
     def strategy(self, opponent):
-        if len(self.history) == 0:
+        if self.history.empty:
             return Actions.C
         if self.history[-1] == Actions.C:
             return Actions.D
