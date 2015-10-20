@@ -1,3 +1,4 @@
+import numpy as np
 from axelrod import Player, obey_axelrod, Actions
 from ._strategies import strategies
 from .hunter import DefectorHunter, AlternatorHunter, RandomHunter, MathConstantHunter, CycleHunter, EventualCycleHunter
@@ -100,6 +101,48 @@ class MetaMinority(MetaPlayer):
         if results.count(D) < results.count(C):
             return D
         return C
+
+
+class MetaMAB(MetaPlayer):
+    """A player who uses an MAB to find a good strategy"""
+
+    name = "Meta MAB"
+
+    def __init__(self, team=None):
+        self.team = team
+
+        for t in self.team:
+            t.scores = []
+            t.proposed_history = []
+
+    def strategy(self, opponent):
+
+        if len(self.history):
+            for player in self.team:
+                s = (player.proposed_history[-1] == C and opponent.history[-1] == C) or 
+                    (player.proposed_history[-1] == D and opponent.history[-1] == C) 
+                player.scores.append(s)
+
+        return super(MetaMAB, self).strategy(opponent)
+
+
+    def meta_strategy(self, results, opponent):
+
+        for r, p in zip(results, self.team):
+            p.proposed_history.append(r)
+
+        if opponent.defections == 0:
+            return C
+
+        rvs = np.random.beta(
+                [sum(p.scores) + 1 for p in self.team], 
+                [len(p.scores) + 1 for p in self.team]
+            )
+        
+        decided_player = np.argmax(rvs)
+
+
+        return results[decided_player]
 
 
 class MetaWinner(MetaPlayer):
